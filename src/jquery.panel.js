@@ -35,19 +35,30 @@
 					var allOptions = $.extend({_init:true}, defaultOptions, data || {}, options);
 					
 					$this
+						// Data
 						.data('panel', data = {
+								
+							// Options
 							side     : allOptions.side,
 							duration : allOptions.duration,
 							easing   : allOptions.easing,
 							hidden   : allOptions.startHidden,
-							collapsed: allOptions.startCollapsed
+							collapsed: allOptions.startCollapsed,
+							
+							// Animated properties
+							expandedStyle: ({
+								right: { marginLeft: 0 },
+								left : { marginLeft: 0 }
+							})[allOptions.side],
+							collapsedStyle: ({
+								right: { marginLeft: -$this.outerWidth() },
+								left : { marginLeft: $this.outerWidth()  }
+							})[allOptions.side],
 						})
 						.addClass('panel-' + data.side)
 						.addClass('panel-content')
 						.addClass(data.collapsed ? 'panel-collapsed' : 'panel-expanded')
 						;
-					
-					console.log(this, data);
 					
 					var wrapper = $this.wrap('<div></div>').parent()
 						.addClass('panel')
@@ -63,30 +74,7 @@
 							height: $this.outerHeight(),
 							width : $this.outerWidth()
 					});
-					
-					// Animated properties
-					
-					var expandedStyle = ({
-						right: {
-							marginLeft: 0
-						},
-						left: {
-							marginLeft: 0
-						}
-					})[data.side];
-					
-					var collapsedStyle = ({
-						right: {
-							marginLeft: -$this.outerWidth()
-						},
-						left: {
-							marginLeft: $this.outerWidth()
-						}
-					})[data.side];
-					
-					wrapper.css(expandedStyle);
-					//$this.panel(allOptions.startHidden ? 'hide' : 'show');
-					//$this.panel(allOptions.startCollapsed ? 'expand' : 'collapse');
+					wrapper.css(data.expandedStyle);
 					
 					// Content's CSS
 					$this.css({
@@ -96,19 +84,18 @@
 						right : 0
 					});
 					
+					// Collapse button action
 					collapseButton.click(function(event) {
 						event.preventDefault();
 						event.stopPropagation();
-						$this.stop().animate(collapsedStyle, data.duration, data.easing, function() {
-							$this.addClass('panel-collapsed').removeClass('panel-expanded');
-						});
+						$this.panel('collapse');
 					});
 
+					// Expand button action
 					expandButton.click(function(event) {
 						event.preventDefault();
 						event.stopPropagation();
-						$this.addClass('panel-expanded').removeClass('panel-collapsed');
-						$this.stop().animate(expandedStyle, data.duration, data.easing);
+						$this.panel('expand');
 					});
 				}
 			});
@@ -140,7 +127,9 @@
 					? {'height': 0}
 					: {'width' : 0}
 					;
-				$this.animate(properties, data.duration, data.easing, data.callback);
+				$this.animate(properties, data.duration, data.easing, data.callback)
+					.trigger('hide.panel')
+					;
 			});
 		},
 		
@@ -153,7 +142,10 @@
 			return this.each(function(){
 				var $this = $(this),
 				    data  = $this.data('panel');
-			
+				$this.addClass('panel-expanded').removeClass('panel-collapsed');
+				$this.stop().animate(data.expandedStyle, data.duration, data.easing)
+					.trigger('expand.panel')
+					;
 			});
 		},
 		
@@ -166,7 +158,10 @@
 			return this.each(function(){
 				var $this = $(this),
 				    data  = $this.data('panel');
-			
+				
+				$this.stop().animate(data.collapsedStyle, data.duration, data.easing, function() {
+					$this.addClass('panel-collapsed').removeClass('panel-expanded');
+				});
 			});
 		}
 	};
