@@ -142,10 +142,13 @@
 			return this.each(function(){
 				var $this = $(this),
 				    data  = $this.data('panel');
-				$this.addClass('panel-expanded').removeClass('panel-collapsed');
-				$this.stop().animate(data.expandedStyle, data.duration, data.easing)
-					.trigger('expand.panel')
-					;
+				$this.stop()
+					.animate(data.expandedStyle, data.duration, data.easing, function() {
+						$this.removeClass('panel-expanding').addClass('panel-expanded');
+					})
+					.removeClass('panel-collapsing panel-collapsed panel-expanded')
+					.addClass('panel-expanding')
+					.trigger('expand.panel');
 			});
 		},
 		
@@ -159,13 +162,20 @@
 				var $this = $(this),
 				    data  = $this.data('panel');
 				
-				$this.stop().animate(data.collapsedStyle, data.duration, data.easing, function() {
-					$this.addClass('panel-collapsed').removeClass('panel-expanded');
-				});
+				$this.stop()
+					.animate(data.collapsedStyle, data.duration, data.easing, function() {
+						$this.removeClass('panel-collapsing').addClass('panel-collapsed');
+					})
+					.removeClass('panel-expanding panel-expanded panel-collapsed')
+					.addClass('panel-collapsing')
+					.trigger('collapse.panel');
 			});
 		}
 	};
 	
+	/**
+	 * Plugin registration
+	 */
 	$.fn.panel = function(method) {
 		
 		// Method calling logic
