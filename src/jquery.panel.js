@@ -3,7 +3,7 @@
 	
 	// Default options
 	var defaultOptions = {
-		side          : 'right',
+		side          : 'left',
 		startHidden   : false,
 		startCollapsed: false,
 		duration      : undefined,
@@ -32,7 +32,12 @@
 				// If the plugin hasn't been initialized yet
 				if(!data || !data._init) {
 					
-					var allOptions = $.extend({_init:true}, defaultOptions, data || {}, options);
+					var allOptions  = $.extend({_init:true}, defaultOptions, data || {}, options),
+					    outerWidth  = $this.outerWidth(),
+					    outerHeight = $this.outerHeight(),
+					    width       = $this.width(),
+					    height      = $this.height(),
+					    position    = $this.position();
 					
 					$this
 						// Data
@@ -47,12 +52,12 @@
 							
 							// Animated properties
 							expandedStyle: ({
-								right: { marginLeft: 0 },
-								left : { marginLeft: 0 }
+								right: { right: 0 },
+								left : { left : 0 },
 							})[allOptions.side],
 							collapsedStyle: ({
-								right: { marginLeft: -$this.outerWidth() },
-								left : { marginLeft: $this.outerWidth()  }
+								right: { right: -outerWidth },
+								left : { left : -outerWidth }
 							})[allOptions.side],
 						})
 						.addClass('panel-' + data.side)
@@ -69,20 +74,35 @@
 					
 					// Wrapper's CSS
 					wrapper.css({
-							top   : $this.position().top,
-							left  : $this.position().left,
-							height: $this.outerHeight(),
-							width : $this.outerWidth()
+							top   : position.top  + Number($this.css('margin-left').replace(/[^0-9]+/g, '')),
+							left  : position.left + Number($this.css('margin-top') .replace(/[^0-9]+/g, '')),
+							height: outerHeight,
+							width : outerWidth,
+							margin: $this.css('margin')
 					});
-					wrapper.css(data.expandedStyle);
 					
 					// Content's CSS
-					$this.css({
-						top   : 0,
-						left  : 0,
-						bottom: 0,
-						right : 0
-					});
+					$this.css($.extend(({
+						left: {
+							left  : 0,
+							right : 'auto',
+							top   : 0,
+							bottom: 0,
+							width : width,
+							height: 'auto'
+						},
+						right: {
+							bottom: 0,
+							left  : 'auto',
+							top   : 0,
+							right : 0,
+							width : width,
+							height: 'auto'
+						}})[data.side], { // common
+							position: 'absolute',
+							margin  : '0'
+						}
+					));
 					
 					// Collapse button action
 					collapseButton.click(function(event) {
@@ -161,7 +181,6 @@
 			return this.each(function(){
 				var $this = $(this),
 				    data  = $this.data('panel');
-				
 				$this.stop()
 					.animate(data.collapsedStyle, data.duration, data.easing, function() {
 						$this.removeClass('panel-collapsing').addClass('panel-collapsed');

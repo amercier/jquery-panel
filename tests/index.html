@@ -8,9 +8,48 @@
 		<link rel="stylesheet" href="../src/jquery.panel.css" />
 	</head>
 	<body>
+	
+<script src="../lib/jquery-1.7.2.js"></script>
+<script>
+	if(window.location.hash == '') {
+		window.location.hash = '#no-css3-transitions';
+	}
+	
+	var enhanced = false;
+	function updateCSS3Transitions(enabled) {
+		$(document.body).attr('id', enabled ? 'css3-transitions' : 'no-css3-transitions');
+		
+		
+		if(enabled) {
+			if(!enhanced) {
+				console.log('Enabling CSS3 Transitions');
+				$.getScript('../lib/jquery.animate-enhanced.js');
+				enhanced = true;
+			}
+			else {
+				console.log('already enabled');
+			}
+		}
+		else {
+			if(enhanced) {
+				console.log('Refreshing');
+				window.location.hash = '#no-css3-transitions';
+				window.location.reload();
+			}
+		}
+	}
+	
+	updateCSS3Transitions(window.location.hash === '#css3-transitions');
+</script>
 
 <h1>jquery-panel</h1>
 
+<p>
+	<a href="#css3-transitions"    onclick="updateCSS3Transitions(true)">Enable CSS3 Transition</a>
+	<a href="#no-css3-transitions" onclick="updateCSS3Transitions(false)">Disable CSS3 Transition</a>
+</p>
+
+<h2>width + top + bottom</h2>
 <div class="container">
 	<p>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
@@ -33,13 +72,14 @@
 		top   : 10px;
 		bottom: 10px;
 	</pre>
-	<pre class="mypanel right" data-panel='{"side":"left"}'>
+	<pre class="mypanel right" data-panel='{"side":"right"}'>
 		width : 300px; right: 0;
 		top   : 10px;
 		bottom: 10px;
 	</pre>
 </div>
 
+<h2>width + top</h2>
 <div class="container">
 	<p>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
@@ -62,13 +102,14 @@
 		top   : 10px;
 		bottom: 'auto';
 	</pre>
-	<pre class="mypanel right" data-panel='{"side":"left"}'>
+	<pre class="mypanel right" data-panel='{"side":"right"}'>
 		width : 300px; right: 0;
 		top   : 10px;
 		bottom: 'auto';
 	</pre>
 </div>
 
+<h2>top</h2>
 <div class="container">
 	<p>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
@@ -87,17 +128,68 @@
 		gravida id.
 	</p>
 	<pre class="mypanel">
-		width : 300px;
-		bottom: 10px;
-		bottom: 'auto';
+		width : auto;
+		top   : 10px;
 	</pre>
-	<pre class="mypanel right" data-panel='{"side":"left"}'>
-		width : 300px; right: 0;
-		bottom: 10px;
-		bottom: 'auto';
+	<pre class="mypanel right" data-panel='{"side":"right"}'>
+		width : auto; right: 0;
+		top   : 10px;
 	</pre>
 </div>
 
+<h2>bottom</h2>
+<div class="container">
+	<p>
+		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
+		ullamcorper tristique purus, sit amet condimentum libero accumsan in.
+		Phasellus vestibulum ultrices ipsum in tristique. Suspendisse sit amet
+		tortor nulla, in egestas metus. Aliquam ultricies est diam. Vestibulum
+		eu mi nisl. Proin luctus semper ligula, vel tristique justo mollis
+		pulvinar. Curabitur sit amet massa diam. Aliquam id nulla sed magna
+		suscipit elementum. Vivamus vel auctor arcu. Class aptent taciti
+		sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
+		Ut fringilla pretium ipsum ut fermentum. Cras eget nulla at velit semper
+		rutrum eget non tortor. Proin neque massa, pulvinar id lobortis sit
+		amet, tincidunt sit amet dolor. Vestibulum ante ipsum primis in faucibus
+		orci luctus et ultrices posuere cubilia Curae; Vestibulum sodales
+		commodo lobortis. Aliquam vehicula viverra ante, id vestibulum turpis
+		gravida id.
+	</p>
+	<pre class="mypanel">
+		bottom: 10px;
+	</pre>
+	<pre class="mypanel right" data-panel='{"side":"right"}'>
+		bottom: 10px; right: 0;
+	</pre>
+</div>
+
+<h2>left/right + width</h2>
+<div class="container">
+	<p>
+		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
+		ullamcorper tristique purus, sit amet condimentum libero accumsan in.
+		Phasellus vestibulum ultrices ipsum in tristique. Suspendisse sit amet
+		tortor nulla, in egestas metus. Aliquam ultricies est diam. Vestibulum
+		eu mi nisl. Proin luctus semper ligula, vel tristique justo mollis
+		pulvinar. Curabitur sit amet massa diam. Aliquam id nulla sed magna
+		suscipit elementum. Vivamus vel auctor arcu. Class aptent taciti
+		sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
+		Ut fringilla pretium ipsum ut fermentum. Cras eget nulla at velit semper
+		rutrum eget non tortor. Proin neque massa, pulvinar id lobortis sit
+		amet, tincidunt sit amet dolor. Vestibulum ante ipsum primis in faucibus
+		orci luctus et ultrices posuere cubilia Curae.
+	</p>
+	<pre class="mypanel">
+		width : 200px;
+		left  : 100px;
+	</pre>
+	<pre class="mypanel right" data-panel='{"side":"right"}'>
+		width : 200px;
+		right : 100px;
+	</pre>
+</div>
+
+<h2>left/right + width + top</h2>
 <div class="container">
 	<p>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
@@ -117,17 +209,91 @@
 		width : 200px;
 		left  : 100px;
 		top   : 10px;
-		bottom: 10px;
 	</pre>
-	<pre class="mypanel right" data-panel='{"side":"left"}'>
+	<pre class="mypanel right" data-panel='{"side":"right"}'>
 		width : 200px;
 		right : 100px;
 		top   : 10px;
-		bottom: 10px;
+	</pre>
+</div>
+
+<h2>left + right</h2>
+<div class="container">
+	<p>
+		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
+		ullamcorper tristique purus, sit amet condimentum libero accumsan in.
+		Phasellus vestibulum ultrices ipsum in tristique. Suspendisse sit amet
+		tortor nulla, in egestas metus. Aliquam ultricies est diam. Vestibulum
+		eu mi nisl. Proin luctus semper ligula, vel tristique justo mollis
+		pulvinar. Curabitur sit amet massa diam. Aliquam id nulla sed magna
+		suscipit elementum. Vivamus vel auctor arcu. Class aptent taciti
+		sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
+		Ut fringilla pretium ipsum ut fermentum. Cras eget nulla at velit semper
+		rutrum eget non tortor. Proin neque massa, pulvinar id lobortis sit
+		amet, tincidunt sit amet dolor. Vestibulum ante ipsum primis in faucibus
+		orci luctus et ultrices posuere cubilia Curae.
+	</p>
+	<pre class="mypanel">
+		left  : 100px;
+		right : 100px;
+		top   : 10px;
+	</pre>
+</div>
+<div class="container">
+	<p>
+		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
+		ullamcorper tristique purus, sit amet condimentum libero accumsan in.
+		Phasellus vestibulum ultrices ipsum in tristique. Suspendisse sit amet
+		tortor nulla, in egestas metus. Aliquam ultricies est diam. Vestibulum
+		eu mi nisl. Proin luctus semper ligula, vel tristique justo mollis
+		pulvinar. Curabitur sit amet massa diam. Aliquam id nulla sed magna
+		suscipit elementum. Vivamus vel auctor arcu. Class aptent taciti
+		sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
+		Ut fringilla pretium ipsum ut fermentum. Cras eget nulla at velit semper
+		rutrum eget non tortor. Proin neque massa, pulvinar id lobortis sit
+		amet, tincidunt sit amet dolor. Vestibulum ante ipsum primis in faucibus
+		orci luctus et ultrices posuere cubilia Curae.
+	</p>
+	<pre class="mypanel right" data-panel='{"side":"right"}'>
+		left  : 100px;
+		right : 100px;
+		top   : 10px;
+	</pre>
+</div>
+
+<h2>margin + top</h2>
+<div class="container">
+	<p>
+		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
+		ullamcorper tristique purus, sit amet condimentum libero accumsan in.
+		Phasellus vestibulum ultrices ipsum in tristique. Suspendisse sit amet
+		tortor nulla, in egestas metus. Aliquam ultricies est diam. Vestibulum
+		eu mi nisl. Proin luctus semper ligula, vel tristique justo mollis
+		pulvinar. Curabitur sit amet massa diam. Aliquam id nulla sed magna
+		suscipit elementum. Vivamus vel auctor arcu. Class aptent taciti
+		sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
+		Ut fringilla pretium ipsum ut fermentum. Cras eget nulla at velit semper
+		rutrum eget non tortor. Proin neque massa, pulvinar id lobortis sit
+		amet, tincidunt sit amet dolor. Vestibulum ante ipsum primis in faucibus
+		orci luctus et ultrices posuere cubilia Curae.
+	</p>
+	<pre class="mypanel">
+		top   : 10px;
+		margin: 10px;
+	</pre>
+	<pre class="mypanel right" data-panel='{"side":"right"}'>
+		top   : 10px; right: 0;
+		margin: 10px;
 	</pre>
 </div>
 
 <h2>Transition options</h2>
+<pre style="float:right; margin:0 0 0 10%; width:40%">
+$('#mypanel').panel({
+	easing  :"bounce",
+	duration:1000
+});
+</pre>
 <pre>
 $('#mypanel').panel({
 	easing  :"easeOutBounce",
@@ -156,7 +322,7 @@ $('#mypanel').panel({
 		top   : 10px;
 		bottom: 10px;
 	</pre>
-	<pre class="mypanel right" data-panel='{"easing":"easeOutExpo", "duration":1000, "side":"left"}'>
+	<pre class="mypanel right" data-panel='{"easing":"easeOutExpo", "duration":1000, "side":"right"}'>
 		width : 300px; right: 0;
 		top   : 10px;
 		bottom: 10px;
@@ -187,19 +353,43 @@ $('#mypanel').panel({
 		top   : 10px;
 		bottom: 10px;
 	</pre>
-	<pre class="mypanel showtransition right" data-panel='{"duration":5000}'>
+	<pre class="mypanel showtransition right" data-panel='{"side":"right", "duration":5000}'>
 		width : 300px; right: 0;
 		top   : 10px;
 		bottom: 10px;
 	</pre>
 </div>
 
-<script src="../lib/jquery-1.7.2.js"></script>
+<h2>Nested panels</h2>
+<div class="container">
+	<p>
+		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
+		ullamcorper tristique purus, sit amet condimentum libero accumsan in.
+		Phasellus vestibulum ultrices ipsum in tristique. Suspendisse sit amet
+		tortor nulla, in egestas metus. Aliquam ultricies est diam. Vestibulum
+		eu mi nisl. Proin luctus semper ligula, vel tristique justo mollis
+		pulvinar. Curabitur sit amet massa diam. Aliquam id nulla sed magna
+		suscipit elementum. Vivamus vel auctor arcu. Class aptent taciti
+		sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
+		Ut fringilla pretium ipsum ut fermentum. Cras eget nulla at velit semper
+		rutrum eget non tortor. Proin neque massa, pulvinar id lobortis sit
+		amet, tincidunt sit amet dolor. Vestibulum ante ipsum primis in faucibus
+		orci luctus et ultrices posuere cubilia Curae; Vestibulum sodales
+		commodo lobortis. Aliquam vehicula viverra ante, id vestibulum turpis
+		gravida id.
+	</p>
+	<pre class="mypanel">
+		top   : 10px;
+		bottom: 10px;
+	</pre>
+</div>
+
 <script src="../lib/jquery.effects.core.js"></script>
 <script src="../src/jquery.panel.js"></script>
 <script>
 
 $(window).ready(function() {
+	
 	$('.mypanel').each(function() {
 		var $this = $(this);
 		$this.text( $this.text().replace(/\t/g, '') );
@@ -209,6 +399,22 @@ $(window).ready(function() {
 	});
 	
 	$('.mypanel').panel();
+	
+	/*
+	['collapse.panel', 'expand.panel'].forEach(function(eventName) {
+		
+		// Event
+		$('.mypanel').bind(eventName, function(event) {
+			console.log(eventName, event, this);
+		});
+		
+		// Event bubbling
+		$(window).on(eventName, '.mypanel', function(event) {
+			console.log(eventName, 'on window', event, this);
+		});
+	});
+	*/
+	
 });
 
 </script>

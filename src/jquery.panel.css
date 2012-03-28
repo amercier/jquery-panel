@@ -15,10 +15,6 @@
 	top: 0; right: 0; bottom: 0; left: 0;
 }
 
-.panel-collapsed {
-	overflow: visible;
-}
-
 .panel-collapsed > .panel-content {
 	display: none;
 }
@@ -68,8 +64,8 @@
 /**
  * >
  */
-.panel-right > .panel-button-collapse:after,
-.panel-left  > .panel-button-expand:after {
+.panel-left  > .panel-button-collapse:after,
+.panel-right > .panel-button-expand:after {
 	border-right-color: #666;
 	left: 2px;
 	top: 5px;
@@ -78,8 +74,8 @@
 /**
  * <
  */
-.panel-right > .panel-button-expand:after,
-.panel-left  > .panel-button-collapse:after {
+.panel-left  > .panel-button-expand:after,
+.panel-right > .panel-button-collapse:after {
 	border-width: 4px;
 	border-left-color: #666;
 	left: 8px;
@@ -89,8 +85,8 @@
 /**
  * Button positions
  */
-.panel-right > .panel-button-collapse { right: 0   ; top: 0 }
-.panel-right > .panel-button-expand   { left : 100%; top: 0 }
-.panel-left  > .panel-button-collapse { left : 0   ; top: 0 }
-.panel-left  > .panel-button-expand   { right: 100%; top: 0 }
+.panel-left  > .panel-button-collapse { right: 0   ; top: 0 }
+.panel-left  > .panel-button-expand   { left : 100%; top: 0 }
+.panel-right > .panel-button-collapse { left : 0   ; top: 0 }
+.panel-right > .panel-button-expand   { right: 100%; top: 0 }
 
