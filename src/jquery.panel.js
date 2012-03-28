@@ -73,12 +73,26 @@
 					var   expandButton = $('<button class="panel-button panel-button-expand"> </button>')  .text('Expand'  ).appendTo($this);
 					
 					// Wrapper's CSS
+					/*
 					wrapper.css({
-							top   : position.top  + Number($this.css('margin-left').replace(/[^0-9]+/g, '')),
-							left  : position.left + Number($this.css('margin-top') .replace(/[^0-9]+/g, '')),
-							height: outerHeight,
-							width : outerWidth,
-							margin: $this.css('margin')
+							top     : position.top  + Number($this.css('margin-left').replace(/[^0-9]+/g, '')),
+							left    : position.left + Number($this.css('margin-top') .replace(/[^0-9]+/g, '')),
+							height  : outerHeight,
+							width   : outerWidth,
+							margin  : $this.css('margin'),
+							position: $this.css('position') || 'absolute'
+					});
+					*/
+					
+					wrapper.css({
+						top     : this.style.top    || 'auto',
+						bottom  : this.style.bottom || 'auto',
+						left    : this.style.left   || 'auto',
+						right   : this.style.right  || 'auto',
+						height  : outerHeight,
+						width   : outerWidth,
+						margin  : [this.style.marginTop, this.style.marginRight, this.style.marginLeft, this.style.marginBottom].join(' ') || 'auto',
+						position: $this.css('position') || 'absolute'
 					});
 					
 					// Content's CSS
