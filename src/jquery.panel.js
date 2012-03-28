@@ -37,7 +37,14 @@
 					    outerHeight = $this.outerHeight(),
 					    width       = $this.width(),
 					    height      = $this.height(),
-					    position    = $this.position();
+					    position    = $this.position(),
+					    cssPosition = $this.css('position');
+					
+					// Ensures that position is either "absolute" ord "fixed"
+					if(cssPosition !== 'absolute' && cssPosition !== 'fixed') {
+						window.console && console.error('Invalid position "' + cssPosition + '" on', $this);
+						throw 'Impossible to create a panel while position is "' + cssPosition + '"';
+					}
 					
 					$this
 						// Data
@@ -73,17 +80,6 @@
 					var   expandButton = $('<button class="panel-button panel-button-expand"> </button>')  .text('Expand'  ).appendTo($this);
 					
 					// Wrapper's CSS
-					/*
-					wrapper.css({
-							top     : position.top  + Number($this.css('margin-left').replace(/[^0-9]+/g, '')),
-							left    : position.left + Number($this.css('margin-top') .replace(/[^0-9]+/g, '')),
-							height  : outerHeight,
-							width   : outerWidth,
-							margin  : $this.css('margin'),
-							position: $this.css('position') || 'absolute'
-					});
-					*/
-					
 					wrapper.css({
 						top     : this.style.top    || 'auto',
 						bottom  : this.style.bottom || 'auto',
@@ -91,7 +87,7 @@
 						right   : this.style.right  || 'auto',
 						height  : outerHeight,
 						width   : outerWidth,
-						margin  : [this.style.marginTop, this.style.marginRight, this.style.marginLeft, this.style.marginBottom].join(' ') || 'auto',
+						margin  : [this.style.marginTop, this.style.marginRight, this.style.marginBottom, this.style.marginLeft].join(' ') || 'auto',
 						position: $this.css('position') || 'absolute'
 					});
 					

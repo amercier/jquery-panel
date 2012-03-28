@@ -279,11 +279,11 @@
 	</p>
 	<pre class="mypanel">
 		top   : 10px;
-		margin: 10px;
+		margin: 10px 20px;
 	</pre>
 	<pre class="mypanel right" data-panel='{"side":"right"}'>
 		top   : 10px; right: 0;
-		margin: 10px;
+		margin: 10px 20px;
 	</pre>
 </div>
 
@@ -379,13 +379,13 @@ $('#mypanel').panel({
 	position: fixed;
 	left    : 5px;
 	bottom  : 5px;
-	margin  : 5px 10px;
+	margin  : 10px 20px;
 </pre>
 <pre class="mypanel right" data-panel='{"side":"right"'>
 	position: fixed;
 	right   : 5px;
 	bottom  : 5px;
-	margin  : 5px 10px;
+	margin  : 10px 20px;
 </pre>
 
 
@@ -399,7 +399,7 @@ $(window).ready(function() {
 	$('.mypanel').each(function() {
 		var $this = $(this);
 		$this.text( $this.text().replace(/\t/g, '') );
-		$this.attr('style', $this.text().replace(/\s+/g, ''));
+		$this.attr('style', $this.text().replace(/\s+/g, ' '));
 		
 		var clone = $this.clone().attr('id', null).removeClass('mypanel').addClass('ruler').insertBefore($this);
 	});
