@@ -1,15 +1,35 @@
 /*! jquery.panel.js - https://github.com/amercier/jquery-panel */
-(function($){
+(function($) {
 	
 	// Default options
 	var defaultOptions = {
 		side          : 'left',
+		showButtons   : true,
 		startHidden   : false,
 		startCollapsed: false,
 		duration      : undefined,
 		easing        : undefined,
 		callback      : undefined
 	};
+	
+	function _setExpanded($this, data, expanded) {
+		data = data || $this.data('panel');
+		if(expanded != data.expanded) {
+			data.expanded = expanded;
+			$this.css(expanded ? data.expandedStyle : data.collapsedStyle);
+		}
+	}
+	
+	function _setVisible($this, data, visible) {
+		data = data || $this.data('panel');
+		if(visible != data.visible) {
+			data.visible = visible;
+			if(visible) {
+				_setExpanded($this, data, true);
+			}
+			$this.toggle(visible);
+		}
+	}
 	
 	var methods = {
 		
@@ -24,7 +44,7 @@
 		 * @return {jQuery} Returns the original jQuery object to maintain chainability
 		 */
 		init: function(options) {
-			return this.each(function(){
+			return this.each(function() {
 				
 				var $this = $(this),
 					data  = $this.data('panel');
@@ -54,8 +74,6 @@
 							side     : allOptions.side,
 							duration : allOptions.duration,
 							easing   : allOptions.easing,
-							hidden   : allOptions.startHidden,
-							collapsed: allOptions.startCollapsed,
 							
 							// Animated properties
 							expandedStyle: ({
@@ -75,9 +93,6 @@
 					var wrapper = $this.wrap('<div></div>').parent()
 						.addClass('panel')
 						;
-					
-					var collapseButton = $('<button class="panel-button panel-button-collapse"> </button>').text('Collapse').appendTo($this);
-					var   expandButton = $('<button class="panel-button panel-button-expand"> </button>')  .text('Expand'  ).appendTo($this);
 					
 					// Wrapper's CSS
 					wrapper.css({
@@ -114,19 +129,32 @@
 						}
 					));
 					
-					// Collapse button action
-					collapseButton.click(function(event) {
-						event.preventDefault();
-						event.stopPropagation();
-						$this.panel('collapse');
-					});
+					// Buttons
+					if(allOptions.showButtons) {
 
-					// Expand button action
-					expandButton.click(function(event) {
-						event.preventDefault();
-						event.stopPropagation();
-						$this.panel('expand');
-					});
+						var collapseButton = $('<button class="panel-button panel-button-collapse"> </button>').text('Collapse').appendTo($this);
+						var   expandButton = $('<button class="panel-button panel-button-expand"> </button>')  .text('Expand'  ).appendTo($this);
+						
+						// Collapse button action
+						collapseButton.click(function(event) {
+							event.preventDefault();
+							event.stopPropagation();
+							$this.panel('collapse');
+						});
+	
+						// Expand button action
+						expandButton.click(function(event) {
+							event.preventDefault();
+							event.stopPropagation();
+							$this.panel('expand');
+						});
+					}
+					
+					// Start enabled/disabled
+					_setVisible($this, data, !allOptions.startHidden);
+					
+					// Start expanded/collapsed
+					_setExpanded($this, data, !allOptions.startCollapsed);
 				}
 			});
 		},
@@ -137,10 +165,8 @@
 		 * @return {jQuery} Returns the original jQuery object to maintain chainability
 		 */
 		show: function() {
-			return this.each(function(){
-				var $this = $(this),
-					data  = $this.data('panel');
-				
+			return this.each(function() {
+				_setVisible($(this), undefined, true);
 			});
 		},
 		
@@ -150,16 +176,22 @@
 		 * @return {jQuery} Returns the original jQuery object to maintain chainability
 		 */
 		hide: function() {
-			return this.each(function(){
+			return this.each(function() {
+				_setVisible($(this), undefined, false);
+			});
+		},
+		
+		/**
+		 * Show/hide the panel(s)
+		 * 
+		 * @param {Boolean} [show] If set, force the toggling state
+		 * @return {jQuery} Returns the original jQuery object to maintain chainability
+		 */
+		toggle: function(show) {
+			return this.each(function() {
 				var $this = $(this),
 				    data  = $this.data('panel');
-				var properties = data.vertical
-					? {'height': 0}
-					: {'width' : 0}
-					;
-				$this.animate(properties, data.duration, data.easing, data.callback)
-					.trigger('hide.panel')
-					;
+				_setVisible($(this), data, show !== undefined && show || show === undefined && !data.visible);
 			});
 		},
 		
@@ -169,16 +201,21 @@
 		 * @return {jQuery} Returns the original jQuery object to maintain chainability
 		 */
 		expand: function() {
-			return this.each(function(){
+			return this.each(function() {
 				var $this = $(this),
 				    data  = $this.data('panel');
-				$this.stop()
-					.animate(data.expandedStyle, data.duration, data.easing, function() {
-						$this.removeClass('panel-expanding').addClass('panel-expanded');
-					})
-					.removeClass('panel-collapsing panel-collapsed panel-expanded')
-					.addClass('panel-expanding')
-					.trigger('expand.panel');
+				
+				if(!data.expanded) {
+					data.expanded = true;
+					
+					$this.stop()
+						.animate(data.expandedStyle, data.duration, data.easing, function() {
+							$this.removeClass('panel-expanding').addClass('panel-expanded');
+						})
+						.removeClass('panel-collapsing panel-collapsed panel-expanded')
+						.addClass('panel-expanding')
+						.trigger('expand.panel');
+				}
 			});
 		},
 		
@@ -188,22 +225,46 @@
 		 * @return {jQuery} Returns the original jQuery object to maintain chainability
 		 */
 		collapse: function() {
-			return this.each(function(){
+			return this.each(function() {
 				var $this = $(this),
 				    data  = $this.data('panel');
-				$this.stop()
-					.animate(data.collapsedStyle, data.duration, data.easing, function() {
-						$this.removeClass('panel-collapsing').addClass('panel-collapsed');
-					})
-					.removeClass('panel-expanding panel-expanded panel-collapsed')
-					.addClass('panel-collapsing')
-					.trigger('collapse.panel');
+				
+				if(data.expanded) {
+					data.expanded = false;
+					
+					$this.stop()
+						.animate(data.collapsedStyle, data.duration, data.easing, function() {
+							$this.removeClass('panel-collapsing').addClass('panel-collapsed');
+						})
+						.removeClass('panel-expanding panel-expanded panel-collapsed')
+						.addClass('panel-collapsing')
+						.trigger('collapse.panel');
+				}
+			});
+		},
+		
+		/**
+		 * Collapse/expand the panel(s)
+		 * 
+		 * @param {Boolean} [expand] If set, force the toggling state
+		 * @return {jQuery} Returns the original jQuery object to maintain chainability
+		 */
+		toggleExpand: function(expand) {
+			return this.each(function() {
+				var $this = $(this),
+				    data  = $this.data('panel');
+				
+				$this.panel(
+						expand !== undefined && expand || expand === undefined && !data.expanded
+						? 'expand'
+						: 'collapse'
+					);
 			});
 		}
 	};
 	
 	/**
-	 * Plugin registration
+	 * Plug-in registration
 	 */
 	$.fn.panel = function(method) {
 		

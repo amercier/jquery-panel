@@ -360,7 +360,49 @@ $('#mypanel').panel({
 	</pre>
 </div>
 
-<!-- Fixed -->
+<h2>Options</h2>
+<pre style="float:right; margin:0 0 0 10%; width:40%">
+$('#mypanel').panel({
+	startCollapsed: true
+});
+</pre>
+<pre>
+$('#mypanel').panel({
+	showButtons: false
+});
+</pre>
+<div class="container">
+	<p>
+		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
+		ullamcorper tristique purus, sit amet condimentum libero accumsan in.
+		Phasellus vestibulum ultrices ipsum in tristique. Suspendisse sit amet
+		tortor nulla, in egestas metus. Aliquam ultricies est diam. Vestibulum
+		eu mi nisl. Proin luctus semper ligula, vel tristique justo mollis
+		pulvinar. Curabitur sit amet massa diam. Aliquam id nulla sed magna
+		suscipit elementum. Vivamus vel auctor arcu. Class aptent taciti
+		sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
+		Ut fringilla pretium ipsum ut fermentum. Cras eget nulla at velit semper
+		rutrum eget non tortor. Proin neque massa, pulvinar id lobortis sit
+		amet, tincidunt sit amet dolor. Vestibulum ante ipsum primis in faucibus
+		orci luctus et ultrices posuere cubilia Curae; Vestibulum sodales
+		commodo lobortis. Aliquam vehicula viverra ante, id vestibulum turpis
+		gravida id.
+	</p>
+	<pre class="mypanel" data-panel='{"showButtons":false}'>
+		width : 300px;
+		top   : 10px;
+		bottom: 10px;
+	</pre>
+	<pre class="mypanel right" data-panel='{"startCollapsed":true}'>
+		width : 300px; right: 0;
+		top   : 10px;
+		bottom: 10px;
+	</pre>
+</div>
+
+
+
+<!-- Fixed
 
 <pre class="mypanel">
 	position: fixed;
@@ -372,8 +414,8 @@ $('#mypanel').panel({
 	right   : 5px;
 	top     : 5px;
 </pre>
-
-<!-- Fixed + margin -->
+ -->
+<!-- Fixed + margin
 
 <pre class="mypanel">
 	position: fixed;
@@ -387,7 +429,7 @@ $('#mypanel').panel({
 	bottom  : 5px;
 	margin  : 10px 20px;
 </pre>
-
+ -->
 
 
 <script src="../lib/jquery.effects.core.js"></script>
@@ -402,11 +444,65 @@ $(window).ready(function() {
 		$this.attr('style', $this.text().replace(/\s+/g, ' '));
 		
 		var clone = $this.clone().attr('id', null).removeClass('mypanel').addClass('ruler').insertBefore($this);
+		
+		// Add Toggle/Expand/Collapse/Set 33%/Set 40px buttons
+		var container = $('<form></form>')
+			.css(({
+				left: {
+					position   : 'absolute',
+					right      : '100%',
+					marginRight: '1em',
+					top        : 0,
+					width      : '210px'
+				},
+				right: {
+					position  : 'absolute',
+					left      : '100%',
+					marginLeft: '1em',
+					top       : 0,
+					width     : '210px'
+				}
+			})[$this.hasClass('right') ? 'right' : 'left'])
+			.submit(function(event) {
+				event.preventDefault();
+				event.stopPropagation();
+			})
+			.appendTo($this.parents('.container'));
+		
+		$('<button>toggleExpand()</button>').appendTo(container).click(function(event) {
+			$this.panel('toggleExpand');
+		});
+		$('<button>toggleExpand(true)</button>').appendTo(container).click(function(event) {
+			$this.panel('toggleExpand', true);
+		});
+		$('<button>toggleExpand(false)</button>').appendTo(container).click(function(event) {
+			$this.panel('toggleExpand', false);
+		});
+		$('<button>collapse()</button>').appendTo(container).click(function(event) {
+			$this.panel('collapse');
+		});
+		$('<button>expand()</button>').appendTo(container).click(function(event) {
+			$this.panel('expand');
+		});
+		$('<button>toggle()</button>').appendTo(container).click(function(event) {
+			$this.panel('toggle');
+		});
+		$('<button>toggle(true)</button>').appendTo(container).click(function(event) {
+			$this.panel('toggle', true);
+		});
+		$('<button>toggle(false)</button>').appendTo(container).click(function(event) {
+			$this.panel('toggle', false);
+		});
+		$('<button>hide()</button>').appendTo(container).click(function(event) {
+			$this.panel('hide');
+		});
+		$('<button>show()</button>').appendTo(container).click(function(event) {
+			$this.panel('show');
+		});
 	});
 	
 	$('.mypanel').panel();
 	
-	/*
 	['collapse.panel', 'expand.panel'].forEach(function(eventName) {
 		
 		// Event
@@ -419,7 +515,6 @@ $(window).ready(function() {
 			console.log(eventName, 'on window', event, this);
 		});
 	});
-	*/
 	
 });
 
