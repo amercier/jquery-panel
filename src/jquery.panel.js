@@ -30,7 +30,9 @@
 		if(visible) {
 			_setExpanded($this, data, true);
 		}
-		$this.toggle(visible);
+		$this
+			.toggle(visible)
+			.trigger(visible ? 'show.panel' : 'hide.panel');
 	}
 	
 	var methods = {
@@ -102,12 +104,17 @@
 						bottom  : bottom,
 						left    : left,
 						right   : right,
-						height  : top  == 'auto' || bottom == 'auto' ? outerHeight : 'auto',
-						width   : left == 'auto' || right  == 'auto' ? outerWidth  : 'auto',
-						margin  : [this.style.marginTop, this.style.marginRight, this.style.marginBottom, this.style.marginLeft].join(' ') || 'auto',
-						position: $this.css('position') || 'absolute'
+						height  : top !== 'auto' && bottom !== 'auto'  ? 'auto' : (/%$/.test(height) ? height : outerHeight),
+						width   : (/%$/.test(height) ? height : outerHeight),
+						margin  : [
+							$this.css('margin-top')    || 0,
+							$this.css('margin-right')  || 0,
+							$this.css('margin-bottom') || 0,
+							$this.css('margin-left')   || 0
+						].join(' '),
+						position: cssPosition
 					});
-					
+
 					// Content's CSS
 					$this.css($.extend(({
 						left: {
@@ -127,7 +134,7 @@
 							height: 'auto'
 						}})[data.side], { // common
 							position: 'absolute',
-							margin  : '0'
+							margin  : 0
 						}
 					));
 					
@@ -213,7 +220,10 @@
 				data.expanded = properties[data.property] == data.expandedValue;
 				$this.stop()
 					.animate(properties, data.duration, data.easing, function() {
-						$this.removeClass('panel-expanding').addClass('panel-expanded');
+						$this
+							.removeClass('panel-expanding')
+							.addClass('panel-expanded')
+							.trigger('afterexpand.panel');
 					})
 					.removeClass('panel-collapsing panel-collapsed panel-expanded')
 					.addClass('panel-expanding')
@@ -237,7 +247,10 @@
 				data.expanded = properties[data.property] == data.expandedValue;
 				$this.stop()
 					.animate(properties, data.duration, data.easing, function() {
-						$this.removeClass('panel-collapsing').addClass('panel-collapsed');
+						$this
+							.removeClass('panel-collapsing')
+							.addClass('panel-collapsed')
+							.trigger('aftercollapse.panel');
 					})
 					.removeClass('panel-expanding panel-expanded panel-collapsed')
 					.addClass('panel-collapsing')
