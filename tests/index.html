@@ -348,12 +348,12 @@ $('#mypanel').panel({
 		commodo lobortis. Aliquam vehicula viverra ante, id vestibulum turpis
 		gravida id.
 	</p>
-	<pre class="mypanel showtransition" data-panel='{"duration":5000}'>
+	<pre class="mypanel" data-panel='{"duration":5000}'>
 		width : 300px;
 		top   : 10px;
 		bottom: 10px;
 	</pre>
-	<pre class="mypanel showtransition right" data-panel='{"side":"right", "duration":5000}'>
+	<pre class="mypanel right" data-panel='{"side":"right", "duration":5000}'>
 		width : 300px; right: 0;
 		top   : 10px;
 		bottom: 10px;
@@ -415,6 +415,7 @@ $('#mypanel').panel({
 	top     : 5px;
 </pre>
  -->
+
 <!-- Fixed + margin
 
 <pre class="mypanel">
@@ -481,8 +482,20 @@ $(window).ready(function() {
 		$('<button>collapse()</button>').appendTo(container).click(function(event) {
 			$this.panel('collapse');
 		});
+		$('<button>collapse(100px)</button>').appendTo(container).click(function(event) {
+			$this.panel('collapse', 100);
+		});
+		$('<button>collapse(33%)</button>').appendTo(container).click(function(event) {
+			$this.panel('collapse', '33%');
+		});
 		$('<button>expand()</button>').appendTo(container).click(function(event) {
 			$this.panel('expand');
+		});
+		$('<button>expand(100px)</button>').appendTo(container).click(function(event) {
+			$this.panel('expand', 100);
+		});
+		$('<button>expand(33%)</button>').appendTo(container).click(function(event) {
+			$this.panel('expand', '33%');
 		});
 		$('<button>toggle()</button>').appendTo(container).click(function(event) {
 			$this.panel('toggle');
@@ -502,8 +515,7 @@ $(window).ready(function() {
 	});
 	
 	$('.mypanel').panel();
-	
-	['collapse.panel', 'expand.panel'].forEach(function(eventName) {
+	['collapse.panel', 'expand.panel', 'hide.panel', 'show.panel'].forEach(function(eventName) {
 		
 		// Event
 		$('.mypanel').bind(eventName, function(event) {
@@ -515,7 +527,6 @@ $(window).ready(function() {
 			console.log(eventName, 'on window', event, this);
 		});
 	});
-	
 });
 
 </script>

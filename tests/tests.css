@@ -110,12 +110,12 @@ button {
  * Transition classes tests
  */
 
-.mypanel.showtransition.panel-collapsing {
+.mypanel.panel-collapsing {
 	background-color: rgba(200, 141, 40, 0.7);
 	border-color: rgba(200, 141, 40, 0.7);
 }
 
-.mypanel.showtransition.panel-expanding {
+.mypanel.panel-expanding {
 	background-color: rgba(120, 40, 200, 0.7);
 	border-color: rgba(120, 40, 200, 0.7);
 }

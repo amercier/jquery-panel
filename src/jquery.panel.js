@@ -12,23 +12,25 @@
 		callback      : undefined
 	};
 	
+	function _getProperty(side) {
+		return side;
+	}
+	
 	function _setExpanded($this, data, expanded) {
 		data = data || $this.data('panel');
-		if(expanded != data.expanded) {
-			data.expanded = expanded;
-			$this.css(expanded ? data.expandedStyle : data.collapsedStyle);
-		}
+		data.expanded = expanded;
+		$this.stop()
+			.removeClass('panel-collapsing panel-expanding')
+			.css(data.property, expanded ? data.expandedValue : data.expandedValue)
+			.addClass(expanded ? 'panel-expanded' : 'panel-collapsed');
 	}
 	
 	function _setVisible($this, data, visible) {
 		data = data || $this.data('panel');
-		if(visible != data.visible) {
-			data.visible = visible;
-			if(visible) {
-				_setExpanded($this, data, true);
-			}
-			$this.toggle(visible);
+		if(visible) {
+			_setExpanded($this, data, true);
 		}
+		$this.toggle(visible);
 	}
 	
 	var methods = {
@@ -75,15 +77,11 @@
 							duration : allOptions.duration,
 							easing   : allOptions.easing,
 							
-							// Animated properties
-							expandedStyle: ({
-								right: { right: 0 },
-								left : { left : 0 },
-							})[allOptions.side],
-							collapsedStyle: ({
-								right: { right: -outerWidth },
-								left : { left : -outerWidth }
-							})[allOptions.side],
+							// Animated property
+							property      : _getProperty(allOptions.side),
+							expandedValue : 0,
+							collapsedValue: $.inArray(allOptions.side, ['left','right']) > -1 ? -outerWidth : -outerHeight,
+							ratio         : $.inArray(allOptions.side, ['left','right']) > -1 ? -outerWidth/100.0 : -outerHeight/100.0
 						})
 						.addClass('panel-' + data.side)
 						.addClass('panel-content')
@@ -160,7 +158,7 @@
 		},
 		
 		/**
-		 * Show the panel(s)
+		 * Show the panel(s) and set it to "expanded" mode instantly
 		 * 
 		 * @return {jQuery} Returns the original jQuery object to maintain chainability
 		 */
@@ -191,7 +189,7 @@
 			return this.each(function() {
 				var $this = $(this),
 				    data  = $this.data('panel');
-				_setVisible($(this), data, show !== undefined && show || show === undefined && !data.visible);
+				_setVisible($(this), data, show !== undefined && show || show === undefined && $this.css('display') === 'none');
 			});
 		},
 		
@@ -200,22 +198,22 @@
 		 * 
 		 * @return {jQuery} Returns the original jQuery object to maintain chainability
 		 */
-		expand: function() {
+		expand: function(amount) {
 			return this.each(function() {
-				var $this = $(this),
-				    data  = $this.data('panel');
+				var $this      = $(this),
+				    data       = $this.data('panel'),
+				    properties = {},
+				    matches;
 				
-				if(!data.expanded) {
-					data.expanded = true;
-					
-					$this.stop()
-						.animate(data.expandedStyle, data.duration, data.easing, function() {
-							$this.removeClass('panel-expanding').addClass('panel-expanded');
-						})
-						.removeClass('panel-collapsing panel-collapsed panel-expanded')
-						.addClass('panel-expanding')
-						.trigger('expand.panel');
-				}
+				properties[data.property] = amount === undefined ? data.expandedValue : ((matches = /(.*)%$/.exec(amount)) ? data.ratio * (100 - parseFloat(matches[1])) : data.collapsedValue + parseFloat(amount));
+				data.expanded = properties[data.property] == data.expandedValue;
+				$this.stop()
+					.animate(properties, data.duration, data.easing, function() {
+						$this.removeClass('panel-expanding').addClass('panel-expanded');
+					})
+					.removeClass('panel-collapsing panel-collapsed panel-expanded')
+					.addClass('panel-expanding')
+					.trigger('expand.panel');
 			});
 		},
 		
@@ -224,22 +222,22 @@
 		 * 
 		 * @return {jQuery} Returns the original jQuery object to maintain chainability
 		 */
-		collapse: function() {
+		collapse: function(amount) {
 			return this.each(function() {
-				var $this = $(this),
-				    data  = $this.data('panel');
+				var $this      = $(this),
+				    data       = $this.data('panel'),
+				    properties = {},
+				    matches;
 				
-				if(data.expanded) {
-					data.expanded = false;
-					
-					$this.stop()
-						.animate(data.collapsedStyle, data.duration, data.easing, function() {
-							$this.removeClass('panel-collapsing').addClass('panel-collapsed');
-						})
-						.removeClass('panel-expanding panel-expanded panel-collapsed')
-						.addClass('panel-collapsing')
-						.trigger('collapse.panel');
-				}
+				properties[data.property] = amount === undefined ? data.collapsedValue : ((matches = /(.*)%$/.exec(amount)) ? data.ratio * parseFloat(matches[1]) : -parseFloat(amount));
+				data.expanded = properties[data.property] == data.expandedValue;
+				$this.stop()
+					.animate(properties, data.duration, data.easing, function() {
+						$this.removeClass('panel-collapsing').addClass('panel-collapsed');
+					})
+					.removeClass('panel-expanding panel-expanded panel-collapsed')
+					.addClass('panel-collapsing')
+					.trigger('collapse.panel');
 			});
 		},
 		
@@ -253,7 +251,6 @@
 			return this.each(function() {
 				var $this = $(this),
 				    data  = $this.data('panel');
-				
 				$this.panel(
 						expand !== undefined && expand || expand === undefined && !data.expanded
 						? 'expand'
