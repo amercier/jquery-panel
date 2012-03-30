@@ -60,7 +60,11 @@
 					    width       = $this.width(),
 					    height      = $this.height(),
 					    position    = $this.position(),
-					    cssPosition = $this.css('position');
+					    cssPosition = $this.css('position'),
+					    top         = $this.css('top')    || 'auto',
+						bottom      = $this.css('bottom') || 'auto',
+						left        = $this.css('left')   || 'auto',
+						right       = $this.css('right')  || 'auto';
 					
 					// Ensures that position is either "absolute" ord "fixed"
 					if(cssPosition !== 'absolute' && cssPosition !== 'fixed') {
@@ -94,12 +98,12 @@
 					
 					// Wrapper's CSS
 					wrapper.css({
-						top     : $this.css('top')    || 'auto',
-						bottom  : $this.css('bottom') || 'auto',
-						left    : $this.css('left')   || 'auto',
-						right   : $this.css('right')  || 'auto',
-						height  : outerHeight,
-						width   : outerWidth,
+						top     : top,
+						bottom  : bottom,
+						left    : left,
+						right   : right,
+						height  : top  == 'auto' || bottom == 'auto' ? outerHeight : 'auto',
+						width   : left == 'auto' || right  == 'auto' ? outerWidth  : 'auto',
 						margin  : [this.style.marginTop, this.style.marginRight, this.style.marginBottom, this.style.marginLeft].join(' ') || 'auto',
 						position: $this.css('position') || 'absolute'
 					});

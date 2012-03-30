@@ -82,6 +82,11 @@ pre {
 	position: relative;
 }
 
+.container p {
+	resize: both;
+	overflow: auto;
+}
+
 button {
 	/*display  : block;*/
 	width    : 50%;
