@@ -27,9 +27,13 @@
 	
 	/* Image replacement */
 	font: 0/0 a;
-    text-shadow: none;
-    color: transparent;
-	
+	text-shadow: none;
+	color: transparent;
+	     -o-user-select: none;
+	    -ms-user-select: none;
+	   -moz-user-select: none;
+	-webkit-user-select: none;
+	       -user-select: none;
 	border: none;
 	background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAgCAYAAAAbifjMAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3AMdCTYRoIYJbgAAAOBJREFUSMftlTEOhCAQRT8bG1paOw/BQTgDx+JIHoHY0U47JVtplhFZ1MZsloqMzkvmZ/5HzfOcp2nC1fPCzfNAABEhpVTUYoxg5n5ACKGApJQQQqhCqiMwczfkUIMVQkQ7SBOQc97uxhhorYvv4zi2AUqp7UfvfQGw1sI5932E3mYAUHKVV5E+m4kIxpiqVoMsyJlXLZ67ygMALMtyD/DPg2MzxRiLmsyJS3b+CjiTBVWAbF4TqjvSpN+11ue84JyDtbYAeO934KaIZyCq9bTJHGDmnd2biyRnr2XFD+TBG5BUkkdgACprAAAAAElFTkSuQmCC') no-repeat left top;
 	cursor: pointer;

@@ -94,10 +94,10 @@
 					
 					// Wrapper's CSS
 					wrapper.css({
-						top     : this.style.top    || 'auto',
-						bottom  : this.style.bottom || 'auto',
-						left    : this.style.left   || 'auto',
-						right   : this.style.right  || 'auto',
+						top     : $this.css('top')    || 'auto',
+						bottom  : $this.css('bottom') || 'auto',
+						left    : $this.css('left')   || 'auto',
+						right   : $this.css('right')  || 'auto',
 						height  : outerHeight,
 						width   : outerWidth,
 						margin  : [this.style.marginTop, this.style.marginRight, this.style.marginBottom, this.style.marginLeft].join(' ') || 'auto',
