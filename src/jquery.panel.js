@@ -16,6 +16,16 @@
 		return side;
 	}
 	
+	function _opposite(value) {
+		if(value === undefined || value === null || value === 'auto') {
+			return value;
+		}
+		else {
+			var matches = value.match(/^(-)?(.*[^a-z])([a-z%]+)$/);
+			return (matches[1] ? 1 : -1) * parseFloat(matches[2]) + matches[3];
+		}
+	}
+	
 	function _setExpanded($this, data, expanded) {
 		data = data || $this.data('panel');
 		data.expanded = expanded;
@@ -66,7 +76,8 @@
 					    top         = $this.css('top')    || 'auto',
 						bottom      = $this.css('bottom') || 'auto',
 						left        = $this.css('left')   || 'auto',
-						right       = $this.css('right')  || 'auto';
+						right       = $this.css('right')  || 'auto',
+						side        = allOptions.side;
 					
 					// Ensures that position is either "absolute" ord "fixed"
 					if(cssPosition !== 'absolute' && cssPosition !== 'fixed') {
@@ -79,15 +90,15 @@
 						.data('panel', data = {
 								
 							// Options
-							side     : allOptions.side,
+							side     : side,
 							duration : allOptions.duration,
 							easing   : allOptions.easing,
 							
 							// Animated property
-							property      : _getProperty(allOptions.side),
+							property      : _getProperty(side),
 							expandedValue : 0,
-							collapsedValue: $.inArray(allOptions.side, ['left','right']) > -1 ? -outerWidth : -outerHeight,
-							ratio         : $.inArray(allOptions.side, ['left','right']) > -1 ? -outerWidth/100.0 : -outerHeight/100.0
+							collapsedValue: $.inArray(side, ['left','right']) > -1 ? -outerWidth : -outerHeight,
+							ratio         : $.inArray(side, ['left','right']) > -1 ? -outerWidth/100.0 : -outerHeight/100.0
 						})
 						.addClass('panel-' + data.side)
 						.addClass('panel-content')
@@ -104,8 +115,8 @@
 						bottom  : bottom,
 						left    : left,
 						right   : right,
-						height  : top !== 'auto' && bottom !== 'auto'  ? 'auto' : (/%$/.test(height) ? height : outerHeight),
-						width   : (/%$/.test(height) ? height : outerHeight),
+						height  : top  !== 'auto' && bottom !== 'auto' ? 'auto' : (/%$/.test(height) ? height : outerHeight),
+						width   : left !== 'auto' && right  !== 'auto' ? 'auto' : (/%$/.test(height) ? height : outerWidth),
 						margin  : [
 							$this.css('margin-top')    || 0,
 							$this.css('margin-right')  || 0,
@@ -140,9 +151,31 @@
 					
 					// Buttons
 					if(allOptions.showButtons) {
-
-						var collapseButton = $('<button class="panel-button panel-button-collapse"> </button>').text('Collapse').appendTo($this);
-						var   expandButton = $('<button class="panel-button panel-button-expand"> </button>')  .text('Expand'  ).appendTo($this);
+						
+						var border = {
+							top   : $this.css('border-top-width'),
+							left  : $this.css('border-left-width'),
+							bottom: $this.css('border-bottom-width'),
+							right : $this.css('border-right-width')
+						};
+						
+						var buttonCSS = ({
+							left: {
+								'margin-top'   : _opposite(border.top),
+								'margin-left'  : border.right,
+								'margin-right' : _opposite(border.right),
+								'margin-bottom': border.top
+							},
+							right: {
+								'margin-top'   : _opposite(border.top),
+								'margin-left'  : _opposite(border.left),
+								'margin-right' : border.left,
+								'margin-bottom': border.top
+							}
+						})[side];
+						
+						var collapseButton = $('<button class="panel-button panel-button-collapse"> </button>').css(buttonCSS).text('Collapse').appendTo($this);
+						var   expandButton = $('<button class="panel-button panel-button-expand"> </button>')  .css(buttonCSS).appendTo($this);
 						
 						// Collapse button action
 						collapseButton.click(function(event) {

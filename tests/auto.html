@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+	<head>
+		<!-- <meta charset="utf-8" /> -->
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>jquery-panel</title>
+		<link rel="stylesheet" href="tests.css" />
+		<link rel="stylesheet" href="../src/jquery.panel.css" />
+		<style>
+
+#panel1 {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+
+		</style>
+	</head>
+	<body>
+		
+<div id="panel1" class="mypanel"></div>
+
+<script src="../lib/jquery-1.7.2.js"></script>
+<script src="../lib/jquery.effects.core.js"></script>
+<script src="../src/jquery.panel.js"></script>
+<script>
+
+$('.mypanel').each(function() {
+	var $this = $(this);
+	$this.text( $this.text().replace(/\t/g, '') );
+	$this.attr('style', $this.text().replace(/\s+/g, ' '));
+	
+	// Add Toggle/Expand/Collapse/Set 33%/Set 40px buttons
+	var container = $('<form></form>')
+		.css(({
+			left: {
+				position: 'absolute',
+				left    : 0,
+				margin  : '1em',
+				top     : 0,
+				width   : '240px'
+			},
+			right: {
+				position: 'absolute',
+				right   : 0,
+				margin  : '1em',
+				top     : 0,
+				width   : '240px'
+			}
+		})[$this.hasClass('right') ? 'right' : 'left'])
+		.submit(function(event) {
+			event.preventDefault();
+			event.stopPropagation();
+		})
+		.appendTo($this.parent());
+	
+	$('<button>toggleExpand()</button>').appendTo(container).click(function(event) {
+		$this.panel('toggleExpand');
+	});
+	$('<button>toggleExpand(true)</button>').appendTo(container).click(function(event) {
+		$this.panel('toggleExpand', true);
+	});
+	$('<button>toggleExpand(false)</button>').appendTo(container).click(function(event) {
+		$this.panel('toggleExpand', false);
+	});
+	$('<button>collapse()</button>').appendTo(container).click(function(event) {
+		$this.panel('collapse');
+	});
+	$('<button>collapse(100px)</button>').appendTo(container).click(function(event) {
+		$this.panel('collapse', 100);
+	});
+	$('<button>collapse(33%)</button>').appendTo(container).click(function(event) {
+		$this.panel('collapse', '33%');
+	});
+	$('<button>expand()</button>').appendTo(container).click(function(event) {
+		$this.panel('expand');
+	});
+	$('<button>expand(100px)</button>').appendTo(container).click(function(event) {
+		$this.panel('expand', 100);
+	});
+	$('<button>expand(33%)</button>').appendTo(container).click(function(event) {
+		$this.panel('expand', '33%');
+	});
+	$('<button>toggle()</button>').appendTo(container).click(function(event) {
+		$this.panel('toggle');
+	});
+	$('<button>toggle(true)</button>').appendTo(container).click(function(event) {
+		$this.panel('toggle', true);
+	});
+	$('<button>toggle(false)</button>').appendTo(container).click(function(event) {
+		$this.panel('toggle', false);
+	});
+	$('<button>hide()</button>').appendTo(container).click(function(event) {
+		$this.panel('hide');
+	});
+	$('<button>show()</button>').appendTo(container).click(function(event) {
+		$this.panel('show');
+	});
+});
+
+$('.mypanel').panel();
+
+</script>
+
+	</body>
+</html>

@@ -94,22 +94,6 @@ button {
 	margin-bottom: 1px;
 }
 
-/**
- * 5px border fix
- */
-
-.mypanel.panel-left  > .panel-button {
-	margin-top: -5px;
-	margin-left: 5px;
-	margin-right: -5px;
-}
-
-.mypanel.panel-right > .panel-button {
-	margin-top: -5px;
-	margin-left: -5px;
-	margin-right: 5px;
-}
-
 
 /**
  * Transition classes tests
