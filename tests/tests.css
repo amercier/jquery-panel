@@ -108,3 +108,10 @@ button {
 	background-color: rgba(120, 40, 200, 0.7);
 	border-color: rgba(120, 40, 200, 0.7);
 }
+
+/**
+ * Custom width rulers
+ */
+.ruler[data-panel='{"width":300}'] {
+	width: 300px;
+}

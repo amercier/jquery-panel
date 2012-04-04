@@ -37,9 +37,7 @@
 	
 	function _setVisible($this, data, visible) {
 		data = data || $this.data('panel');
-		if(visible) {
-			_setExpanded($this, data, true);
-		}
+		_setExpanded($this, data, visible);
 		$this
 			.toggle(visible)
 			.trigger(visible ? 'show.panel' : 'hide.panel');
@@ -66,18 +64,24 @@
 				// If the plugin hasn't been initialized yet
 				if(!data || !data._init) {
 					
-					var allOptions  = $.extend({_init:true}, defaultOptions, data || {}, options),
-					    outerWidth  = $this.outerWidth(),
+					var allOptions  = $.extend({_init:true}, defaultOptions, data || {}, options);
+					
+					if('width' in allOptions) {
+						$this.css('width', allOptions.width);
+					}
+					
+					var outerWidth  = $this.outerWidth(),
 					    outerHeight = $this.outerHeight(),
 					    width       = $this.width(),
 					    height      = $this.height(),
 					    position    = $this.position(),
 					    cssPosition = $this.css('position'),
-					    top         = $this.css('top')    || 'auto',
-						bottom      = $this.css('bottom') || 'auto',
-						left        = $this.css('left')   || 'auto',
-						right       = $this.css('right')  || 'auto',
-						side        = allOptions.side;
+					    top         = $this.css('top'),
+						bottom      = $this.css('bottom'),
+						left        = $this.css('left'),
+						right       = $this.css('right'),
+						side        = allOptions.side,
+						fixedHSize  = (side === 'right' || side === 'left') && ('width' in allOptions);
 					
 					// Ensures that position is either "absolute" ord "fixed"
 					if(cssPosition !== 'absolute' && cssPosition !== 'fixed') {
@@ -108,15 +112,15 @@
 					var wrapper = $this.wrap('<div></div>').parent()
 						.addClass('panel')
 						;
-					
+						
 					// Wrapper's CSS
 					wrapper.css({
 						top     : top,
 						bottom  : bottom,
-						left    : left,
-						right   : right,
+						left    : fixedHSize && side === 'right'  ? 'auto' : left,
+						right   : fixedHSize && side === 'left' ? 'auto' : right,
 						height  : top  !== 'auto' && bottom !== 'auto' ? 'auto' : (/%$/.test(height) ? height : outerHeight),
-						width   : left !== 'auto' && right  !== 'auto' ? 'auto' : (/%$/.test(height) ? height : outerWidth),
+						width   : !fixedHSize && left !== 'auto' && right  !== 'auto' ? 'auto' : (/%$/.test(height) ? height : outerWidth),
 						margin  : [
 							$this.css('margin-top')    || 0,
 							$this.css('margin-right')  || 0,
