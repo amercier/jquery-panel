@@ -13,17 +13,14 @@
 	top: 0; right: 0; bottom: 0; left: 0;
 }
 
-.panel-collapsed > .panel-content {
-	display: none;
-}
-
 /**
  * =============================================================================
  * Panel buttons
  * =============================================================================
  */
 
-.panel-button {
+.panel-button,
+.panel-button:hover {
 	
 	/* Image replacement */
 	font: 0/0 a;
@@ -35,73 +32,31 @@
 	-webkit-user-select: none;
 	       -user-select: none;
 	border: none;
-	background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAgCAYAAAAbifjMAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3AMdCTYRoIYJbgAAAOBJREFUSMftlTEOhCAQRT8bG1paOw/BQTgDx+JIHoHY0U47JVtplhFZ1MZsloqMzkvmZ/5HzfOcp2nC1fPCzfNAABEhpVTUYoxg5n5ACKGApJQQQqhCqiMwczfkUIMVQkQ7SBOQc97uxhhorYvv4zi2AUqp7UfvfQGw1sI5932E3mYAUHKVV5E+m4kIxpiqVoMsyJlXLZ67ygMALMtyD/DPg2MzxRiLmsyJS3b+CjiTBVWAbF4TqjvSpN+11ue84JyDtbYAeO934KaIZyCq9bTJHGDmnd2biyRnr2XFD+TBG5BUkkdgACprAAAAAElFTkSuQmCC') no-repeat left top;
+	background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAgCAYAAAAbifjMAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3AQEER4RcN+RCQAAAOpJREFUSMfdlDsOwyAQRIfIDS2tOx+Cg3AGjsWROAKio912S1I5AUz8jRLJlAv7xK5mRnjvMy6cAQCmaTrVHGPEAxfP9wFEhJRSVQshgJn3A5xzFSSlBOdcF9IdgZl3Qz7uYIYQ0QKyCsj5LQulFKSU1f04jusAIcTrobW2AmitYYzZHmFvMwAI730ulTgvqWwmIiilukoc2mI787yL3ynxlBtjjH/+wc3yoBRUCKGqtTlxys6bgCNZ0AW0zXNC7Y601u9SymNeMMZAa10BrLUL8OoSj0AWedAmdPl9Zq7svqnEdvZeVtwgD554h5yxqeQJDgAAAABJRU5ErkJggg==') no-repeat left top;
 	cursor: pointer;
 	display: block;
 	font-size: 20px;
 	margin: 0;
 	padding: 0;
 	position: absolute;
-	-webkit-transition: opacity 0.2s;
 	height: 16px;
 	width: 16px;
-	-webkit-box-sizing: content-box;
+	-moz-box-sizing: content-box;
+	     box-sizing: content-box;
 }
 
-
-
-/*
-.panel-button:before,
-.panel-button:after {
-	border: 4px solid transparent;
-	content: '';
-	display: block;
-	position: absolute;
-	width: 0;
-	height: 0;
+.panel-expanding  .panel-button-expand,
+.panel-collapsing .panel-button-collapse {
+	display: none;
 }
-
-.panel-button:after {
-	margin-left: 4px;
-}
-
-
-.panel-button:hover {
-	border-color: #999;
-	background: #ccc;
-}
-*/
-
-/**
- * >
- */
-/*
-.panel-left  > .panel-button-collapse:before,
-.panel-left  > .panel-button-collapse:after,
-.panel-right > .panel-button-expand:before,
-.panel-right > .panel-button-expand:after {
-	border-right-color: #666;
-	left: 0px;
-	top: 5px;
-}*/
 
 /**
  * <
  */
-.panel-left  > .panel-button-collapse,
-.panel-right > .panel-button-expand {
+.panel-left  .panel-button-collapse,
+.panel-right .panel-button-expand {
 	background-position: left bottom;
 }
-/*
-.panel-left  > .panel-button-expand:before,
-.panel-left  > .panel-button-expand:after,
-.panel-right > .panel-button-collapse:before,
-.panel-right > .panel-button-collapse:after {
-	border-left-color: #666;
-	left: 5px;
-	top: 5px;
-}
-*/
 
 /**
  * Button positions
