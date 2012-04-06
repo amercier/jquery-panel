@@ -40,14 +40,17 @@
 		$this.parent().toggle(visible);
 	}
 	
-	function _setWrapperVisible($this, data, visible) {
+	function _isVisible($this) {
+		return $this.parent().css('display') != 'none';
+	}
+	
+	function _updateWrapperSize($this, data, visible) {
 		data = data || $this.data('panel');
-		if(data._wrapperVisible === true) {
-			data.wrapperStyleVisible[data.side] = $this.parent().css(data.side); 
-			data.wrapperStyleHidden[data.side] = $this.parent().css(data.side); 
+		
+		if(data._wrapperVisible != visible || data._wrapperVisible === undefined) {
+			$this.parent().css(visible ? data.wrapperStyleVisible : data.wrapperStyleHidden);
+			data._wrapperVisible = visible;
 		}
-		$this.parent().css(visible ? data.wrapperStyleVisible : data.wrapperStyleHidden);
-		data._wrapperVisible = visible;
 	}
 	
 	var methods = {
@@ -71,11 +74,13 @@
 				// If the plugin hasn't been initialized yet
 				if(!data || !data._init) {
 					
-					var allOptions  = $.extend({_init:true}, defaultOptions, data || {}, options);
+					var allOptions = $.extend(true, {}, defaultOptions, data || {}, options);
 					
-					if('width' in allOptions && allOptions.width != 'auto') {
-						$this.css('width', allOptions.width);
-					}
+					['width', 'height', 'top', 'right', 'bottom', 'left'].forEach(function(property) {
+						if(property in allOptions && allOptions[property] != 'auto') {
+							$this.css(property, allOptions[property]);
+						}
+					});
 					
 					var outerWidth  = $this.outerWidth(),
 					    outerHeight = $this.outerHeight(),
@@ -83,10 +88,10 @@
 					    height      = $this.height(),
 					    position    = $this.position(),
 					    cssPosition = $this.css('position'),
-					    top         = $this.css('top'),
-						bottom      = $this.css('bottom'),
-						left        = $this.css('left'),
-						right       = $this.css('right'),
+					    top         = 'top'    in allOptions && allOptions.top    || $this.css('top'),
+						bottom      = 'bottom' in allOptions && allOptions.bottom || $this.css('bottom'),
+						left        = 'left'   in allOptions && allOptions.left   || $this.css('left'),
+						right       = 'right'  in allOptions && allOptions.right  || $this.css('right'),
 						side        = allOptions.side,
 						fixedHSize  = (side === 'right' || side === 'left') && ('width' in allOptions) && allOptions.width != 'auto';
 					
@@ -100,6 +105,8 @@
 						// Data
 						.data('panel', data = {
 								
+							_init: true,
+								
 							// Options
 							side     : side,
 							duration : allOptions.duration,
@@ -111,21 +118,14 @@
 							collapsedValue: $.inArray(side, ['left','right']) > -1 ? -outerWidth : -outerHeight,
 							ratio         : $.inArray(side, ['left','right']) > -1 ? -outerWidth/100.0 : -outerHeight/100.0,
 							
-							// Wrapper style
+							// Wrapper style (hidden/visible)
 							wrapperStyleVisible: {
 								top     : top,
 								bottom  : bottom,
 								left    : fixedHSize && side === 'right'  ? 'auto' : left,
 								right   : fixedHSize && side === 'left' ? 'auto' : right,
-								height  : top  !== 'auto' && bottom !== 'auto' ? 'auto' : (/%$/.test(height) ? height : outerHeight),
-								width   : !fixedHSize && left !== 'auto' && right  !== 'auto' ? 'auto' : (/%$/.test(height) ? height : outerWidth),
-								margin  : [
-									$this.css('margin-top')    || 0,
-									$this.css('margin-right')  || 0,
-									$this.css('margin-bottom') || 0,
-									$this.css('margin-left')   || 0
-								].join(' '),
-								position: cssPosition
+								height  : top !== 'auto' && bottom !== 'auto' ? 'auto' : (/%$/.test(height) ? height : outerHeight),
+								width   : !fixedHSize && left !== 'auto' && right  !== 'auto' ? 'auto' : (/%$/.test(height) ? height : outerWidth)
 							},
 							wrapperStyleHidden: {
 								top     : top,
@@ -145,6 +145,15 @@
 					$this.wrap('<div></div>')
 						.parent()
 						.addClass('panel')
+						.css({
+							margin  : [
+								$this.css('margin-top')    || 0,
+								$this.css('margin-right')  || 0,
+								$this.css('margin-bottom') || 0,
+								$this.css('margin-left')   || 0
+							].join(' '),
+							position: cssPosition
+						})
 						;
 
 					// Content's CSS
@@ -219,7 +228,7 @@
 					
 					// Start expanded/collapsed
 					_setExpanded($this, data, !allOptions.startCollapsed);
-					_setWrapperVisible($this, data, !allOptions.startCollapsed);
+					_updateWrapperSize($this, data, !allOptions.startCollapsed);
 				}
 			});
 		},
@@ -231,11 +240,18 @@
 		 */
 		show: function() {
 			return this.each(function() {
-				var $this = $(this);
-				_setVisible($this, undefined, true);
-				_setExpanded($this, undefined, true);
-				_setWrapperVisible($this, undefined, true);
-				$this.trigger('show.panel');
+				var $this = $(this),
+				    data  = $this.data('panel');
+				if(!_isVisible($this)) {
+					if(!data || !data._init) {
+						throw 'Attempting to show an uninitialized panel';
+					}
+					
+					_setVisible($this, data, true);
+					_setExpanded($this, data, true);
+					_updateWrapperSize($this, data, true);
+					$this.trigger('show.panel');
+				}
 			});
 		},
 		
@@ -246,11 +262,18 @@
 		 */
 		hide: function() {
 			return this.each(function() {
-				var $this = $(this);
-				_setVisible($this, undefined, false);
-				_setExpanded($this, undefined, false);
-				_setWrapperVisible($this, undefined, true);
-				$this.trigger('hide.panel');
+				var $this = $(this),
+			        data  = $this.data('panel');
+				if(_isVisible($this)) {
+					if(!data || !data._init) {
+						throw 'Attempting to hide an uninitialized panel';
+					}
+					
+					_setVisible($this, data, false);
+					_setExpanded($this, data, false);
+					_updateWrapperSize($this, data, false);
+					$this.trigger('hide.panel');
+				}
 			});
 		},
 		
@@ -271,27 +294,42 @@
 		 * 
 		 * @return {jQuery} Returns the original jQuery object to maintain chainability
 		 */
-		expand: function(amount) {
+		expand: function(amount, now, hide) {
 			return this.each(function() {
 				var $this      = $(this),
 				    data       = $this.data('panel'),
 				    properties = {},
 				    matches;
 				
+				if(!data || !data._init) {
+					throw 'Attempting to expand an uninitialized panel';
+				}
+				
 				properties[data.property] = amount === undefined ? data.expandedValue : ((matches = /(.*)%$/.exec(amount)) ? data.ratio * (100 - parseFloat(matches[1])) : data.collapsedValue + parseFloat(amount));
 				data.expanded = properties[data.property] == data.expandedValue;
 				_setVisible($this, data, true);
-				_setWrapperVisible($this, data, true);
-				$this.stop()
-					.animate(properties, data.duration, data.easing, function() {
-						$this
-							.removeClass('panel-expanding')
-							.addClass('panel-expanded')
-							.trigger('afterexpand.panel');
-					})
-					.removeClass('panel-collapsing panel-collapsed panel-expanded')
-					.addClass('panel-expanding')
-					.trigger('expand.panel');
+				_updateWrapperSize($this, data, true);
+				
+				// After expanding
+				function afterExpand() {
+					$this
+						.removeClass('panel-expanding')
+						.addClass('panel-expanded')
+						.trigger('afterexpand.panel');
+					if(hide) {
+						_setVisible($this, data, false);
+					}
+				}
+				
+				if(now) {
+					$this.stop().css(properties);
+					$this.trigger('expand.panel');
+					afterExpand();
+				}
+				else {
+					$this.stop().addClass('panel-expanding').animate(properties, data.duration, data.easing, afterExpand);
+					$this.trigger('expand.panel');
+				}
 			});
 		},
 		
@@ -300,29 +338,45 @@
 		 * 
 		 * @return {jQuery} Returns the original jQuery object to maintain chainability
 		 */
-		collapse: function(amount) {
+		collapse: function(amount, now, hide) {
 			return this.each(function() {
 				var $this      = $(this),
 				    data       = $this.data('panel'),
 				    properties = {},
 				    matches;
 				
+				if(!data || !data._init) {
+					throw 'Attempting to collapse an uninitialized panel';
+				}
+				
 				properties[data.property] = amount === undefined ? data.collapsedValue : ((matches = /(.*)%$/.exec(amount)) ? data.ratio * parseFloat(matches[1]) : -parseFloat(amount));
 				data.expanded = properties[data.property] == data.expandedValue;
 				_setVisible($this, data, true);
-				$this.stop()
-					.animate(properties, data.duration, data.easing, function() {
-						$this
-							.removeClass('panel-collapsing')
-							.addClass('panel-collapsed')
-							.trigger('aftercollapse.panel');
-						if(amount === undefined) {
-							_setWrapperVisible($this, data, false);
-						}
-					})
-					.removeClass('panel-expanding panel-expanded panel-collapsed')
-					.addClass('panel-collapsing')
-					.trigger('collapse.panel');
+				
+				// After collapse
+				function afterCollapse() {
+					$this
+						.removeClass('panel-collapsing')
+						.addClass('panel-collapsed')
+						.trigger('aftercollapse.panel');
+					if(amount === undefined) {
+						_updateWrapperSize($this, data, false);
+					}
+					if(hide) {
+						_setVisible($this, data, false);
+					}
+				}
+				
+				if(now) {
+					$this.stop().css(properties);
+					$this.trigger('collapse.panel');
+					afterCollapse();
+				}
+				else {
+					$this.stop().addClass('panel-collapsing').animate(properties, data.duration, data.easing, afterCollapse);
+					$this.trigger('collapse.panel');
+				}
+				
 			});
 		},
 		
