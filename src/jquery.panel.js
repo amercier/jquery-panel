@@ -13,7 +13,7 @@
 	};
 	
 	function _getProperty(side) {
-		return side;
+		return 'margin-' + side;
 	}
 	
 	function _opposite(value) {
@@ -95,12 +95,20 @@
 						side        = allOptions.side,
 						fixedHSize  = (side === 'right' || side === 'left') && ('width' in allOptions) && allOptions.width != 'auto';
 					
+					// Replace -12.34px by -12.34
+					var isPixel = /^(-?(?:\d*\.)?\d+)px$/i;
+					top    = isPixel.test('' + top)    ? parseFloat(('' + top   ).replace(isPixel,'$1')) : top;
+					bottom = isPixel.test('' + bottom) ? parseFloat(('' + bottom).replace(isPixel,'$1')) : bottom;
+					left   = isPixel.test('' + left)   ? parseFloat(('' + left  ).replace(isPixel,'$1')) : left;
+					right  = isPixel.test('' + right)  ? parseFloat(('' + right ).replace(isPixel,'$1')) : right;
+					
 					// Ensures that position is either "absolute" ord "fixed"
 					if(cssPosition !== 'absolute' && cssPosition !== 'fixed') {
 						window.console && console.error('Invalid position "' + cssPosition + '" on', $this);
 						throw 'Impossible to create a panel while position is "' + cssPosition + '"';
 					}
 					
+					var tmpWrapperStyleVisible;
 					$this
 						// Data
 						.data('panel', data = {
@@ -119,7 +127,7 @@
 							ratio         : $.inArray(side, ['left','right']) > -1 ? -outerWidth/100.0 : -outerHeight/100.0,
 							
 							// Wrapper style (hidden/visible)
-							wrapperStyleVisible: {
+							wrapperStyleVisible: tmpWrapperStyleVisible = {
 								top     : top,
 								bottom  : bottom,
 								left    : fixedHSize && side === 'right'  ? 'auto' : left,
@@ -130,8 +138,8 @@
 							wrapperStyleHidden: {
 								top     : top,
 								bottom  : 'auto',
-								left    : side === 'right' ? 'auto' : 0,
-								right   : side === 'left' ? 'auto' : 0,
+								left    : side === 'right' ? 'auto' : tmpWrapperStyleVisible.left,
+								right   : side === 'left' ? 'auto' : tmpWrapperStyleVisible.right,
 								width   : 16,
 								height  : 16
 							}
@@ -321,6 +329,8 @@
 					}
 				}
 				
+				$this.removeClass('panel-collapsed');
+				
 				if(now) {
 					$this.stop().css(properties);
 					$this.trigger('expand.panel');
@@ -366,6 +376,8 @@
 						_setVisible($this, data, false);
 					}
 				}
+				
+				$this.removeClass('panel-expanded');
 				
 				if(now) {
 					$this.stop().css(properties);
